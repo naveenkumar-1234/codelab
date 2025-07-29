@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class CompilationService {
     record TestCase(String input , String expected){}
-    public ApiResponse compileJava(UserCodeRequest userCodeRequest) throws IOException {
+    public String compileJava(UserCodeRequest userCodeRequest) throws IOException {
 
         String userCode = userCodeRequest.getCode();
         BufferedWriter solutionWriter = new BufferedWriter(new FileWriter("./Dockers/java-compiler/Solution.java"));
@@ -44,9 +44,6 @@ public class CompilationService {
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
 
-        return new ApiResponse(
-                "sucess",
-                new String("kk")
-        );
+        return "sucess";
     }
 }

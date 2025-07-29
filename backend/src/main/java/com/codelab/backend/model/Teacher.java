@@ -4,10 +4,7 @@ package com.codelab.backend.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 
@@ -16,6 +13,7 @@ import java.io.Serializable;
 @Data
 @Table(name = "teacher")
 @Builder
+@NoArgsConstructor
 public class Teacher implements Serializable {
 
     @Id
@@ -31,7 +29,7 @@ public class Teacher implements Serializable {
     private Integer sprNumber;
 
     @ManyToOne
-    @JoinColumn(name = "")
+    @JoinColumn(name = "subject_id")
     private Subject subject;
 
     @OneToOne(fetch = FetchType.LAZY)

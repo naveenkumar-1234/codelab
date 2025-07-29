@@ -23,9 +23,9 @@ public class CompilationController {
         }
 
         @GetMapping("/run")
-        public ResponseEntity<ApiResponse> javaCompilation(@RequestBody UserCodeRequest userCode){
+        public ResponseEntity<?> javaCompilation(@RequestBody UserCodeRequest userCode){
             System.out.println(userCode);
-            ApiResponse res= null;
+            String res= null;
             try {
                 res = compilationService.compileJava(userCode);
             } catch (IOException e) {

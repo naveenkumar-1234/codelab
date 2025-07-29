@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "student")
 @Builder
@@ -36,7 +36,7 @@ public class Student implements Serializable {
 
 
     @ManyToOne
-    @JoinColumn(name = "")
+    @JoinColumn(name = "subject_id")
     private Subject subject;
 
     @OneToOne(fetch = FetchType.LAZY)

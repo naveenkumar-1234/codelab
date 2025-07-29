@@ -22,63 +22,45 @@ public class SubjectController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ApiResponse> addSubject(@RequestBody Subject subject){
+    public ResponseEntity<?> addSubject(@RequestBody Subject subject){
         return ResponseEntity.status(HttpStatus.CREATED).body(
-                new ApiResponse(
-                        "success",
-                        subjectService.createSubject(subject)
-                )
+               "sd"
         );
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<ApiResponse> getSubjects(
+    public ResponseEntity<?> getSubjects(
             @RequestParam String department,
             @RequestParam Integer year,
             @RequestParam String semesterType){
         return ResponseEntity.status(200).body(
-                new ApiResponse(
-                        "success",
-                        subjectService.getSubjectsByFilters(department,year,semesterType)
-                )
+               "d"
         );
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getSubject(@PathVariable Long id){
+    public ResponseEntity<?> getSubject(@PathVariable Long id){
             try{
                 return ResponseEntity.status(200).body(
-                        new ApiResponse(
-                                "success",
-                                subjectService.getSubjectById(id)
-                        )
+                        "s"
                 );
             }
             catch (RuntimeException e){
                 return ResponseEntity.status(200).body(
-                        new ApiResponse(
-                                "404",
-                                e.getMessage()
-                ));
+                "S");
             }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> updateSubject(@PathVariable Long id, @RequestBody Subject subject){
+    public ResponseEntity<?> updateSubject(@PathVariable Long id, @RequestBody Subject subject){
         try{
             return  ResponseEntity.status(HttpStatus.ACCEPTED).body(
-                    new ApiResponse(
-                            "success",
-                            subjectService.updateSubject(id,subject)
-                    )
+                   "s"
             );
 
         } catch (RuntimeException e) {
             return  ResponseEntity.status(HttpStatus.NOT_FOUND).body(
-                    new ApiResponse(
-                            "success",
-                            e.getMessage()
-                    )
+                    "s"
             );
         }
 

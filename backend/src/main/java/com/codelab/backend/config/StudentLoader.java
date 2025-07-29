@@ -22,7 +22,7 @@ public class StudentLoader implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        String email = "s@gmail.com";
+        String email = "st@gmail.com";
         if(userRepository.findByEmail(email).isEmpty()){
             User studentUser = User.builder()
                     .email(email)

@@ -1,7 +1,12 @@
 package com.codelab.backend.service;
 
 import com.codelab.backend.dto.login.LoginRequest;
+import com.codelab.backend.dto.user.TeacherResponseDto;
+import com.codelab.backend.dto.user.UserResponseDto;
+import com.codelab.backend.model.User;
+import com.codelab.backend.repo.UserRepository;
 import com.codelab.backend.utils.JwtUtils;
+import com.codelab.backend.utils.LoginResponseUtils;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -22,42 +28,44 @@ import java.util.Map;
 @Slf4j
 public class AuthService {
 
-
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final CustomUserDetailsService customUserDetailsService;
+    private final LoginResponseUtils loginResponseUtils;
 
-    public ResponseEntity<?> login(LoginRequest request , HttpServletResponse response){
+    public UserResponseDto login(LoginRequest request , HttpServletResponse response){
+       try {
+           System.out.println("dlksdj");
+           Authentication authentication = authenticationManager.authenticate(
+                   new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
 
-        try{
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
+           );
 
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            String jwtToken = jwtUtils.generateToken(userDetails);
+           System.out.println("Ssf");
+           UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+           String jwtToken = jwtUtils.generateToken(userDetails);
 
+           log.info("User : {}\nToken : {}", userDetails.getUsername(), jwtToken);
+           log.info("Authenticated user: {}", userDetails.getUsername());
+           log.info("Authorities: {}", userDetails.getAuthorities());
 
-            log.info("User : {}\nToken : {}",userDetails.getUsername(),jwtToken);
-            ResponseCookie cookie = ResponseCookie.from("jwt",jwtToken)
-                    .httpOnly(true)
-                    .secure(false)
-                    .maxAge(24*60*60)
-                    .path("/")
-                    .sameSite("Strict")
-                    .build();
-            response.addHeader(HttpHeaders.SET_COOKIE,cookie.toString());
-            return ResponseEntity.ok()
-                    .body(Map.of(
-                            "email",userDetails.getUsername(),
-                            "role",userDetails.getAuthorities().iterator().next().getAuthority()
-                    ));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
+           ResponseCookie cookie = ResponseCookie.from("jwt", jwtToken)
+                   .httpOnly(true)
+                   .secure(false)
+                   .maxAge(24 * 60 * 60)
+                   .path("/")
+                   .sameSite("Strict")
+                   .build();
+
+           response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+           return loginResponseUtils.getUserResponseDto(userDetails);
+       }catch (Exception e){
+           throw new UsernameNotFoundException("Invalid email or password");
+       }
+
     }
 
-    public ResponseEntity<?> logout(HttpServletResponse response){
+    public String logout(HttpServletResponse response){
         ResponseCookie cookie = ResponseCookie.from("jwt","")
                 .httpOnly(true)
                 .secure(false)
@@ -66,7 +74,12 @@ public class AuthService {
                 .sameSite("Strict")
                 .build();
         response.setHeader(HttpHeaders.SET_COOKIE,cookie.toString());
-        return ResponseEntity.ok().body("Logout successfully");
+        return "logout";
     }
+
+
+
+
+
 
 }

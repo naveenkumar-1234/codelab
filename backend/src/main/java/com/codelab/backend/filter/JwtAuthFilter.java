@@ -44,12 +44,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                    log.info("inside the token not null");
                    String email = jwtUtils.extractEmail(token);
                    String role = jwtUtils.extractRole(token);
+
                    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
                    if(jwtUtils.isValid(token,userDetails)){
                        UsernamePasswordAuthenticationToken authentication=
                                new UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
-
+                       System.out.println("SDsd");
                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                        SecurityContextHolder.getContext().setAuthentication(authentication);
                        System.out.println(userDetails.getUsername() +" has ROLE " + userDetails.getAuthorities() );

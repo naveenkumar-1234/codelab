@@ -1,6 +1,7 @@
 package com.codelab.backend.config;
 
 import com.codelab.backend.filter.JwtAuthFilter;
+import com.codelab.backend.handler.JwtAccessDeniedHandler;
 import com.codelab.backend.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -27,11 +29,14 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final CustomUserDetailsService userDetailsService;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        log.info("At the SecurityFilterChain config(------)");
+        log.info("At the SecurityFilterChain config(-)");
+
 
         return http
                 .csrf(csrf -> csrf.disable())
@@ -43,8 +48,14 @@ public class SecurityConfig {
                                         .requestMatchers("/api/v1/teacher/**").hasAnyRole("ADMIN","TEACHER")
                                         .requestMatchers("/api/v1/student/**").hasAnyRole("ADMIN","TEACHER","STUDENT")
                                         .anyRequest().authenticated())
+                                        .exceptionHandling(ex -> ex
+                                                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                                                .accessDeniedHandler(jwtAccessDeniedHandler)
+                                            )
+
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 //                .authenticationProvider(authenticationProvider())
                 .userDetailsService(userDetailsService)
@@ -53,6 +64,7 @@ public class SecurityConfig {
 
         @Bean
         public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+                log.info("Inside auth manager");
                 return config.getAuthenticationManager();
         }
 

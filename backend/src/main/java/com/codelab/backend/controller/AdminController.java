@@ -2,7 +2,10 @@ package com.codelab.backend.controller;
 
 import com.codelab.backend.dto.register.StudentRegisterDTO;
 import com.codelab.backend.dto.register.TeacherRegisterDTO;
+import com.codelab.backend.model.Student;
+import com.codelab.backend.model.Teacher;
 import com.codelab.backend.response.ApiResponse;
+import com.codelab.backend.response.ResponseBuilder;
 import com.codelab.backend.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,38 +19,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/admin")
+@RequestMapping("${api.path}/admin")
 @PreAuthorize("ROLE_ADMIN")
 @RequiredArgsConstructor
 public class AdminController {
 
-
     private final AdminService adminService;
 
     @PostMapping("/teacher/register")
-    public ResponseEntity<?> registerTeacher(@Valid @RequestBody TeacherRegisterDTO teacherRegisterDTO){
+    public ResponseEntity<ApiResponse<Teacher>> registerTeacher(@Valid @RequestBody TeacherRegisterDTO teacherRegisterDTO){
+        return ResponseBuilder.created(
+                adminService.registerTeacher(teacherRegisterDTO),
+                "Teacher created successfully"
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        System.out.println(authentication);
-
-
-        return ResponseEntity.status(201).body(
-                new ApiResponse(
-                        "success",
-                        adminService.registerTeacher(teacherRegisterDTO)
-                )
         );
+
     }
-
     @PostMapping("/student/register")
-    public ResponseEntity<?> registerStudent(@Valid @RequestBody StudentRegisterDTO studentRegisterDTO){
-        return ResponseEntity.status(201).body(
-                new ApiResponse(
-                        "success",
-                        adminService.registerStudent(studentRegisterDTO)
-                )
+    public ResponseEntity<ApiResponse<Student>> registerStudent(@Valid @RequestBody StudentRegisterDTO studentRegisterDTO){
+        return ResponseBuilder.created(
+                adminService.registerStudent(studentRegisterDTO),
+                "Student created successfully"
         );
+
     }
 
 

@@ -16,18 +16,4 @@ public class StudentService {
 
 
 
-    public Student addStudent(Student student){
-        return studentRepository.save(student);
-    }
-    public List<Student> getAllStudents(){
-        return  studentRepository.findAll();
-    }
-
-    @Cacheable(value = "students", key = "#email")
-    public Student getStudentByEmail(String email){
-        System.out.println("in service");
-        return Student.builder().build();
-//        return studentRepository
-//        return studentRepository.findByEmail(email);
-    }
 }

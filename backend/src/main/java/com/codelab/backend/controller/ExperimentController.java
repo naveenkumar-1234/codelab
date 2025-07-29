@@ -27,11 +27,9 @@ public class ExperimentController {
             );
         } catch (Exception e) {
             return ResponseEntity.status(401).body(
-                    new ApiResponse(
-                            "failure",
-                            e.getMessage()
-                    )
-            );
+                    "ss"
+
+                            );
         }
     }
 
@@ -43,7 +41,7 @@ public class ExperimentController {
     }
 
     @DeleteMapping("/{subjectId}/{experimentNo}")
-    public ResponseEntity<ApiResponse> deleteExperiment(
+    public ResponseEntity<?> deleteExperiment(
             @PathVariable Long subjectId ,
             @PathVariable Integer experimentNo) {
 
@@ -51,17 +49,13 @@ public class ExperimentController {
             experimentService.deleteExperiment(subjectId, experimentNo);
             return
                     ResponseEntity.status(200)
-                            .body(new ApiResponse(
-                                    "success",
-                                    "deleted da"
-                            ));
+                            .body(
+                                    "kk"
+                            );
 
         } catch (Exception e) {
             return ResponseEntity.status(401).body(
-                    new ApiResponse(
-                            "failure",
-                            e.getMessage()
-                    )
+                    "ll"
             );
         }
 
